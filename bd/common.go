@@ -64,3 +64,50 @@ func ConnStr(claves models.SecretRDSJson) string {
 
 	return dsn
 }
+
+func UserIsAdmin(userUUID string) (bool, string) {
+	fmt.Println("Comienza UserIsAdmin")
+
+	//Nos conectamos a la base de datos
+	err := DbConnect()
+
+	//Verificamos que no hayamos tenido un error para conectarnos a la base de datos.
+	if err != nil {
+		return false, err.Error()
+	}
+
+	// Generamos un "defer" para que se cierre la conexión a la base de datos hasta el final de la función
+	defer Db.Close()
+
+	//Declaramos la sentencia SQL para buscar el usuario
+	sentencia := "SELECT 1 FROM users WHERE User_UUID='" + userUUID + "' AND User_Status = 0"
+
+	//Imprimimos la sentencia para ver la misma en cloudwatch y poder servir de ayuda para depurar el codigo.
+	fmt.Println(sentencia)
+
+	//Vamos a ejecutar la sentencia SQL
+	rows, err := Db.Query(sentencia)
+
+	//Verificamos no haya existido un error al ejecutar la sentencia SQL
+	if err != nil {
+		return false, err.Error()
+	}
+
+	//Variable para guardar la info del registro devuelto a traves de la consulta.
+	var valor string
+
+	//Nos posicionamos en el primer registro devuelto por la consulta
+	rows.Next()
+
+	//Leeremos los datos a traves de un scan y lo debemos guardar en una variable
+	rows.Scan(&valor)
+
+	fmt.Println("UserAdmin > Ejecución Exitosa !! - valor devuelto " + valor)
+
+	//Verifiamos si valor nos indica que es admin
+	if valor == "1" {
+		return true, ""
+	}
+
+	return false, "User is not Admin"
+}
