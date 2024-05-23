@@ -20,31 +20,45 @@ func Manejadores(path string, method string, body string, headers map[string]str
 	id := request.PathParameters["id"]
 	idn, _ := strconv.Atoi(id)
 
+	fmt.Println("Mostramos ID: " + id)
 	//validamos la autorización del token
 	isOk, statusCode, user := validoAuthorization(path, method, headers)
 
-	//Verificamos que la autorizació no tenga problemas
+	fmt.Println("El IsOk: ")
+	fmt.Println(isOk)
+
+	//Verificamos que la autorización no tenga problemas
 	if !isOk {
 		return statusCode, user
 	}
 
+	fmt.Println("Llegamos hasta aqui:")
+	fmt.Println("Path1: " + path[0:5])
+	fmt.Println("Path2: " + path[1:5])
+
 	//Validamos y analizamos que nos viene en el path
-	switch path[0:4] {
+	switch path[1:5] {
 	case "user":
+		fmt.Println("Entramos a User")
 		return ProcesoUsers(body, path, method, user, id, request)
 	case "prod":
+		fmt.Println("Entramos a Products")
 		return ProcesoProducts(body, path, method, user, idn, request)
 	case "stoc":
+		fmt.Println("Entramos a Stock")
 		return ProcesoStock(body, path, method, user, idn, request)
 	case "addr":
+		fmt.Println("Entramos a Address")
 		return ProcesoAddress(body, path, method, user, idn, request)
 	case "cate":
+		fmt.Println("Entramos a Category")
 		return ProcesoCategory(body, path, method, user, idn, request)
 	case "orde":
+		fmt.Println("Entramos a Order")
 		return ProcesoOrder(body, path, method, user, idn, request)
 	}
 
-	return 400, "Method Invalid"
+	return 400, "Method Invalid locoo"
 }
 
 func validoAuthorization(path string, method string, headers map[string]string) (bool, int, string) {
@@ -76,7 +90,7 @@ func validoAuthorization(path string, method string, headers map[string]string) 
 		}
 	}
 
-	fmt.Println("Token OK")
+	fmt.Println("Token OK Yei")
 
 	return true, 200, msg
 }
@@ -107,7 +121,7 @@ func ProcesoCategory(body string, path string, method string, user string, id in
 	case "POST":
 		return routers.InsertCategory(body, user)
 	}
-	return 400, "Method Invalid"
+	return 400, "Method Invalid 22"
 }
 
 func ProcesoOrder(body string, path string, method string, user string, id int, request events.APIGatewayV2HTTPRequest) (int, string) {

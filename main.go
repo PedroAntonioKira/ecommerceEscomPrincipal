@@ -39,6 +39,7 @@ func main() {
 
 func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) (*events.APIGatewayProxyResponse, error) {
 
+	fmt.Println("Aqui inicia el programa")
 	awsgo.InicializoAWS()
 
 	if !ValidoParametros() {
@@ -50,6 +51,16 @@ func EjecutoLambda(ctx context.Context, request events.APIGatewayV2HTTPRequest) 
 	method := request.RequestContext.HTTP.Method
 	body := request.Body
 	header := request.Headers
+
+	fmt.Println("Información importante:")
+	fmt.Println("Path: " + path)
+	fmt.Println("Method: " + method)
+	fmt.Println("body: " + body)
+	//fmt.Println("Header: " + header)
+	fmt.Println("HEADERS: ")
+	for key, value := range header {
+		fmt.Printf("%s: %s\n", key, value)
+	}
 
 	bd.ReadSecret()
 
